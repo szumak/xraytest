@@ -38,6 +38,16 @@ pipeline {
                 buildInfo.env.capture = true
                 // Publish the merged build-info to Artifactory
                 server.publishBuildInfo buildInfo
+
+                // Scan the buildInfo using xray 
+                def scanConfig = [
+                    'buildName'      : buildInfo.name,
+                    'buildNumber'    : buildInfo.number,
+                    'failBuild'      : true
+                  ]
+                def scanResult = server.xrayScan scanConfig
+                echo scanResult as String
+
               }
             }
         }
