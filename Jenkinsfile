@@ -1,3 +1,6 @@
+#!/usr/bin/env groovy
+
+def server = Artifactory.server "mszArtifactory"
 pipeline {
 
     environment {
