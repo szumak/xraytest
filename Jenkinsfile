@@ -25,7 +25,7 @@ pipeline {
             steps {
               script {
                 def rtDocker = Artifactory.docker server: server
-                image = "$ARTIFACTORY_REPO/acme/$IMAGE_NAME:latest"
+                image = "$ARTIFACTORY_REPO/acme/$IMAGE_NAME:$TAG"
                 def buildInfo = rtDocker.push(image, 'acme')
                 buildInfo.env.capture = true
                 // Publish the merged build-info to Artifactory
