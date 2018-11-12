@@ -12,16 +12,19 @@ pipeline {
     agent { node { label 'slave' } }
 
     stages {
+        stage('Prepare') {
+           script {
+              TAG = "${env.CHANGE_ID ? 'PR-' + env.CHANGE_ID : env.GIT_BRANCH}-${BUILD_ID}-${env.GIT_COMMIT.substring(0, 7)}".replaceAll('/', '_')
+           }
+        }
+
         stage('Build image') {
             steps {
                 echo 'Building...'
                 sh """
                    cd image
-                   docker build --pull -t "${ARTIFACTORY_REPO}/acme/${IMAGE_NAME}:latest" .
+                   docker build --pull -t "${ARTIFACTORY_REPO}/acme/${IMAGE_NAME}:${TAG}" .
                 """
-                script {
-                    TAG = "${env.CHANGE_ID ? 'PR-' + env.CHANGE_ID : env.GIT_BRANCH}-${BUILD_ID}-${env.GIT_COMMIT.substring(0, 7)}".replaceAll('/', '_')
-                }
             }
         }
         stage('Artifactory push image and scan') {
