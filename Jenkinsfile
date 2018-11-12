@@ -20,12 +20,14 @@ pipeline {
         }
         stage('Artifactory push image and scan') {
             steps {
+              script {
                 def rtDocker = Artifactory.docker server: server
                 image = "$ARTIFACTORY_REPO/acme/$IMAGE_NAME:latest"
                 def buildInfo = rtDocker.push(image, 'acme')
                 buildInfo.env.capture = true
                 // Publish the merged build-info to Artifactory
                 server.publishBuildInfo buildInfo
+              }
             }
         }
         stage('Deploy') {
