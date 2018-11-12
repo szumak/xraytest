@@ -18,13 +18,14 @@ pipeline {
                 """
             }
         }
-        stage('Push image') {
+        stage('Artifactory push image and scan') {
             steps {
-                echo 'Docker login....'
-                sh """
-                   docker login -u $ARTIFACTORY_CRED_USR -p $ARTIFACTORY_CRED_PSW $ARTIFACTORY_REPO
-                   docker push "${ARTIFACTORY_REPO}/acme/${IMAGE_NAME}:latest"
-                """
+                def rtDocker = Artifactory.docker server: server
+                image = "$ARTIFACTORY_REPO/acme/$IMAGE_NAME:latest"
+                def buildInfo = rtDocker.push(image, 'acme')
+                buildInfo.env.capture = true
+                // Publish the merged build-info to Artifactory
+                server.publishBuildInfo buildInfo
             }
         }
         stage('Deploy') {
