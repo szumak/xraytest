@@ -13,9 +13,11 @@ pipeline {
 
     stages {
         stage('Prepare') {
-           script {
-              TAG = "${env.CHANGE_ID ? 'PR-' + env.CHANGE_ID : env.GIT_BRANCH}-${BUILD_ID}-${env.GIT_COMMIT.substring(0, 7)}".replaceAll('/', '_')
-           }
+          steps {
+             script {
+                TAG = "${env.CHANGE_ID ? 'PR-' + env.CHANGE_ID : env.GIT_BRANCH}-${BUILD_ID}-${env.GIT_COMMIT.substring(0, 7)}".replaceAll('/', '_')
+             }
+          }
         }
 
         stage('Build image') {
